@@ -52,7 +52,7 @@ Open the web app in your browser.
 
 Upload a test image.
 
-[Note: Insert your Sample Input Image example here in the future]
+![alt text](image.png)
 
 Select your desired Kernel Size (must be an odd number, e.g., 3, 5, 15).
 
