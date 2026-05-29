@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 import cv2
 import numpy as np
 import os
@@ -6,10 +6,16 @@ import os
 app = Flask(__name__)
 os.makedirs('static', exist_ok=True) 
 
+def calculate_metrics(original, filtered):
+    mse = np.mean((original.astype("float") - filtered.astype("float")) ** 2)
+    if mse == 0:
+        return 0.0, 100.0 
+    psnr = 10 * np.log10((255 ** 2) / mse)
+    return round(mse, 2), round(psnr, 2)
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
-        
         ksize = int(request.form['ksize'])       
         lap_mode = request.form['lap_mode']      
         
@@ -25,10 +31,7 @@ def home():
         if not os.path.exists(filepath):
             return render_template('index.html', processed=False, error="Please upload an image first.")
 
-        # --- B. PROCESS THE IMAGE ---
         img = cv2.imread(filepath)
-        
-        # NEW: Save the original color image before doing anything else
         cv2.imwrite('static/color.jpg', img)
 
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -49,12 +52,30 @@ def home():
             
         cv2.imwrite('static/laplacian.jpg', lap_img)
 
+        mean_mse, mean_psnr = calculate_metrics(gray, mean_img)
+        gauss_mse, gauss_psnr = calculate_metrics(gray, gauss_img)
+        lap_mse, lap_psnr = calculate_metrics(gray, lap_img)
+
         return render_template('index.html', 
                                processed=True, 
                                current_ksize=ksize, 
-                               current_lap=lap_mode.title()) 
+                               current_lap=lap_mode.title(),
+                               mean_mse=mean_mse, mean_psnr=mean_psnr,
+                               gauss_mse=gauss_mse, gauss_psnr=gauss_psnr,
+                               lap_mse=lap_mse, lap_psnr=lap_psnr) 
 
     return render_template('index.html', processed=False)
+
+# NEW: The Clear App function
+@app.route('/clear')
+def clear_app():
+    # Find the uploaded image
+    filepath = os.path.join('static', 'uploaded.jpg')
+    # If it exists, delete it from the hard drive
+    if os.path.exists(filepath):
+        os.remove(filepath)
+    # Send the user back to the default home page
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)

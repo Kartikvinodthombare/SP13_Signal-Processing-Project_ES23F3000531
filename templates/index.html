@@ -1,108 +1,141 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Image Filter Lab - SP13</title>
+    <title>SP13 Project - Kartik Vinod Thombare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
     <style>
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f4f7f6; color: #333; 
-            max-width: 1100px; margin: 0 auto; padding: 20px;
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            color: #2d3436; max-width: 1100px; margin: 0 auto; padding: 30px 20px; min-height: 100vh;
         }
 
-        h1 { text-align: center; color: #2c3e50; margin-bottom: 5px; }
-
+        /* NEW: The Student Info is now the main header */
         .student-info {
-            text-align: center; color: #7f8c8d; font-size: 14px;
-            margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #e0e4e8;
+            text-align: center; color: #2d3436; font-size: 24px; font-weight: 600;
+            margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid rgba(0,0,0,0.05);
         }
-        .student-info span { font-weight: bold; color: #2c3e50; }
+        .student-info .sub-text { 
+            font-size: 16px; color: #636e72; font-weight: 400; margin-top: 5px;
+        }
+        .student-info span { color: #0984e3; font-weight: 600; }
+
+        .glass-panel {
+            background: #ffffff; padding: 25px; border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid rgba(255,255,255,0.8);
+        }
 
         .control-panel {
-            background: white; padding: 20px; border-radius: 10px; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
-            display: flex; gap: 20px; align-items: center; justify-content: center; 
-            margin-bottom: 20px;
+            display: flex; gap: 20px; align-items: center; justify-content: center; margin-bottom: 30px;
         }
 
-        input, select, button { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
-        input[type="number"] { width: 80px; }
+        input, select { 
+            padding: 10px 15px; border: 1px solid #dfe6e9; border-radius: 8px; 
+            font-size: 14px; font-family: 'Poppins', sans-serif; transition: 0.3s;
+        }
+        input:focus, select:focus { outline: none; border-color: #0984e3; box-shadow: 0 0 8px rgba(9, 132, 227, 0.2); }
+        input[type="number"] { width: 90px; }
 
-        button { background-color: #3498db; color: white; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        button:hover { background-color: #2980b9; }
+        button { 
+            background: linear-gradient(135deg, #0984e3 0%, #00cec9 100%);
+            color: white; border: none; cursor: pointer; font-weight: 600; 
+            padding: 12px 25px; border-radius: 8px; font-family: 'Poppins', sans-serif;
+            transition: transform 0.2s ease, box-shadow 0.2s ease; 
+        }
+        button:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(9, 132, 227, 0.3); }
+
+        .clear-btn {
+            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+            color: white; text-decoration: none; font-weight: 600; 
+            padding: 12px 25px; border-radius: 8px; font-family: 'Poppins', sans-serif;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-block; font-size: 14px;
+        }
+        .clear-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(214, 48, 49, 0.3); }
 
         .status-banner {
-            text-align: center; background-color: #e8f4fd; color: #2980b9;
-            padding: 10px; border-radius: 5px; margin-bottom: 20px; font-size: 15px;
+            text-align: center; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); 
+            color: #1565c0; padding: 12px; border-radius: 10px; margin-bottom: 25px; 
+            font-size: 15px; font-weight: 500;
         }
 
-        .theory-box {
-            background-color: white; padding: 15px 25px; border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin-bottom: 25px;
-            font-size: 14px; line-height: 1.6; border-left: 5px solid #3498db;
-        }
-        .theory-box strong { color: #2c3e50; }
+        .theory-box { margin-bottom: 35px; border-left: 6px solid #0984e3; }
+        .theory-box strong { color: #2d3436; font-size: 16px;}
+        .theory-box ul { margin-top: 10px; color: #636e72; }
 
-        /* The flexbox grid naturally puts items in a row */
-        .grid { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+        .grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px; }
 
         .card { 
-            background: white; padding: 15px; border-radius: 10px; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; width: 220px; 
-            display: flex; flex-direction: column; justify-content: space-between;
+            background: white; padding: 15px; border-radius: 15px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06); text-align: center; width: 230px; 
+            display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.3s ease;
         }
+        .card:hover { transform: translateY(-5px); }
 
-        .card h3 { margin-top: 0; font-size: 15px; color: #2c3e50; border-bottom: 2px solid #f4f7f6; padding-bottom: 10px; }
-        img { max-width: 100%; border-radius: 5px; margin-bottom: 15px; }
+        .card h3 { margin-top: 0; font-size: 15px; color: #2d3436; font-weight: 600; margin-bottom: 15px; }
+        img { max-width: 100%; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
         .dl-btn {
-            display: inline-block; background-color: #2ecc71; color: white;
-            text-decoration: none; padding: 8px; border-radius: 5px; font-size: 12px; font-weight: bold;
+            display: inline-block; background-color: #f1f2f6; color: #2d3436;
+            text-decoration: none; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 600; transition: 0.3s;
         }
-        .dl-btn:hover { background-color: #27ae60; }
+        .dl-btn:hover { background-color: #00b894; color: white; }
         
-        /* Small label for the rows */
-        .row-title { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .row-title { text-align: center; color: #b2bec3; font-size: 13px; margin-bottom: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
+
+        .metrics-section { margin-top: 40px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; border-radius: 10px; overflow: hidden; }
+        th, td { border: 1px solid #f1f2f6; padding: 15px; text-align: center; font-size: 14px; }
+        th { background-color: #fafbfc; color: #2d3436; font-weight: 600; }
+        td { color: #636e72; }
     </style>
 </head>
 <body>
 
-    <h1> SP13, Signal Processing Project</h1>
-    
     <div class="student-info">
-        <span>Name:</span> Kartik Vinod Thombare &nbsp;|&nbsp; 
-        <span>Roll No:</span> ES23F3000531 &nbsp;|&nbsp; 
+        SP13 - Signal Processing Project<br>
+        <div class="sub-text">
+            Name: <span>Kartik Vinod Thombare</span> &nbsp;|&nbsp; 
+            Roll No: <span>ES23F3000531</span>
+        </div>
     </div>
 
     {% if error %}
-        <p style="color: red; text-align: center; font-weight: bold;">{{ error }}</p>
+        <p style="color: #d63031; text-align: center; font-weight: 600; background: #ff767522; padding: 10px; border-radius: 8px; max-width: 400px; margin: 0 auto 20px auto;">{{ error }}</p>
     {% endif %}
     
-    <form method="POST" enctype="multipart/form-data" class="control-panel">
+    <form method="POST" enctype="multipart/form-data" class="control-panel glass-panel">
         <div>
-            <label><strong>Upload Image:</strong><br><span style="font-size:11px; color:#7f8c8d;">(Leave blank to reuse)</span></label><br>
-            <input type="file" name="image" accept="image/*">
+            <label style="font-weight: 600; font-size: 14px; color: #2d3436;">Upload Image:</label><br>
+            <span style="font-size:11px; color:#b2bec3;">(Leave blank to reuse)</span><br>
+            <input type="file" name="image" accept="image/*" style="margin-top: 5px;">
         </div>
         <div>
-            <label><strong>Kernel Size (3-99):</strong></label><br>
-            <input type="number" name="ksize" min="3" max="99" step="2" value="3" required>
+            <label style="font-weight: 600; font-size: 14px; color: #2d3436;">Kernel Size:</label><br>
+            <span style="font-size:11px; color:#b2bec3;">(3 to 99)</span><br>
+            <input type="number" name="ksize" min="3" max="99" step="2" value="3" required style="margin-top: 5px;">
         </div>
         <div>
-            <label><strong>Laplacian Mode:</strong></label><br>
-            <select name="lap_mode">
+            <label style="font-weight: 600; font-size: 14px; color: #2d3436;">Laplacian Mode:</label><br>
+            <span style="font-size:11px; color:#ffffff;">.</span><br>
+            <select name="lap_mode" style="margin-top: 5px;">
                 <option value="sharpen">Sharpened</option>
                 <option value="edges">Edge Map</option>
             </select>
         </div>
-        <div style="margin-top: 18px;">
+        
+        <div style="margin-top: 25px; display: flex; gap: 10px;">
             <button type="submit">Apply Filters</button>
+            <a href="/clear" class="clear-btn">Clear</a>
         </div>
     </form>
 
     {% if processed %}
     
-    <div class="theory-box">
-       
-        <ul style="margin: 5px 0 0 0; padding-left: 20px;">
+    <div class="theory-box glass-panel">
+        <strong>📚 Filter Theory Guide:</strong>
+        <ul>
             <li><strong>Mean Filter:</strong> A simple blur that averages all pixels in the kernel equally. Fast, but can leave blocky artifacts.</li>
             <li><strong>Gaussian Filter:</strong> A natural, smooth blur. It uses a bell-curve weight, meaning the center pixel matters most, and edges fade out gently.</li>
             <li><strong>Laplacian Filter:</strong> A high-pass filter that detects rapid changes in color. It ignores flat areas and highlights borders to find edges or sharpen the image.</li>
@@ -110,7 +143,7 @@
     </div>
 
     <div class="status-banner">
-        Currently Applied ➜ Kernel Size: <strong>{{ current_ksize }}x{{ current_ksize }}</strong> | Laplacian Mode: <strong>{{ current_lap }}</strong>
+        Currently Applied ➜ Kernel Size: <strong>{{ current_ksize }}x{{ current_ksize }}</strong> &nbsp;|&nbsp; Laplacian Mode: <strong>{{ current_lap }}</strong>
     </div>
 
     <div class="row-title">Original Images</div>
@@ -154,6 +187,35 @@
             </div>
             <a href="/static/laplacian.jpg" download="laplacian_filter.jpg" class="dl-btn">↓ Download</a>
         </div>
+    </div>
+
+    <div class="metrics-section glass-panel">
+        <div class="row-title" style="margin-bottom: 0;">Signal Quality Metrics</div>
+        <p style="text-align: center; font-size: 13px; color: #b2bec3; margin-top: 5px;">
+            Compared against the Original (Gray) image.
+        </p>
+        <table>
+            <tr>
+                <th>Filter Type</th>
+                <th>MSE (Mean Squared Error) 📉 <br><span style="font-size: 11px; font-weight: normal; color: #636e72;">(Lower is closer to original)</span></th>
+                <th>PSNR (Peak Signal-to-Noise Ratio) 📈 <br><span style="font-size: 11px; font-weight: normal; color: #636e72;">(Higher means better quality retained)</span></th>
+            </tr>
+            <tr>
+                <td><strong>Mean Filter</strong></td>
+                <td>{{ mean_mse }}</td>
+                <td>{{ mean_psnr }} dB</td>
+            </tr>
+            <tr>
+                <td><strong>Gaussian Filter</strong></td>
+                <td>{{ gauss_mse }}</td>
+                <td>{{ gauss_psnr }} dB</td>
+            </tr>
+            <tr>
+                <td><strong>Laplacian Filter</strong></td>
+                <td>{{ lap_mse }}</td>
+                <td>{{ lap_psnr }} dB</td>
+            </tr>
+        </table>
     </div>
     {% endif %}
 
